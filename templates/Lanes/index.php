@@ -1,0 +1,50 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var \App\Model\Entity\Lane[]|\Cake\Collection\CollectionInterface $lanes
+ */
+?>
+<div class="lanes index content">
+    <?= $this->Html->link(__('New Lane'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+    <h3><?= __('Lanes') ?></h3>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th><?= $this->Paginator->sort('id') ?></th>
+                    <th><?= $this->Paginator->sort('position') ?></th>
+                    <th><?= $this->Paginator->sort('name') ?></th>
+                    <th><?= $this->Paginator->sort('created') ?></th>
+                    <th><?= $this->Paginator->sort('modified') ?></th>
+                    <th class="actions"><?= __('Actions') ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($lanes as $lane): ?>
+                <tr>
+                    <td><?= $this->Number->format($lane->id) ?></td>
+                    <td><?= $this->Number->format($lane->position) ?></td>
+                    <td><?= h($lane->name) ?></td>
+                    <td><?= h($lane->created) ?></td>
+                    <td><?= h($lane->modified) ?></td>
+                    <td class="actions">
+                        <?= $this->Html->link(__('View'), ['action' => 'view', $lane->id]) ?>
+                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $lane->id]) ?>
+                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $lane->id], ['confirm' => __('Are you sure you want to delete # {0}?', $lane->id)]) ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <div class="paginator">
+        <ul class="pagination">
+            <?= $this->Paginator->first('<< ' . __('first')) ?>
+            <?= $this->Paginator->prev('< ' . __('previous')) ?>
+            <?= $this->Paginator->numbers() ?>
+            <?= $this->Paginator->next(__('next') . ' >') ?>
+            <?= $this->Paginator->last(__('last') . ' >>') ?>
+        </ul>
+        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
+    </div>
+</div>
