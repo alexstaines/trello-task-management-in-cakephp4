@@ -18,7 +18,9 @@ class LanesController extends AppController
      */
     public function index()
     {
-        $lanes = $this->paginate($this->Lanes);
+        $lanes = $this->Lanes->find('all')->contain(['Cards']);
+
+
 
         $this->set(compact('lanes'));
     }
