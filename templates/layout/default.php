@@ -31,13 +31,14 @@
 
     <!-- Bootstrap v5 Styles -->
     <?= $this->Html->css(['bootstrap/bootstrap.css']) ?>
+    <?= $this->Html->css(['custom.css']) ?>
     <?= $this->fetch('css') ?>
 
 </head>
 <body>
 
     <main>
-        <div class="container py-4">
+        <div class="container-fluid py-4">
             <?= $this->fetch('content') ?>
         </div>
     </main>
