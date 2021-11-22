@@ -20,7 +20,7 @@ CREATE TABLE `cards` (
   `created` timestamp NOT NULL DEFAULT current_timestamp(),
   `modified` timestamp NOT NULL DEFAULT current_timestamp(),
 
-  `due_date` datetime NOT NULL,
+  `due_date` datetime DEFAULT NULL,
   `archived` tinyint(1) DEFAULT '0'
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 

@@ -86,8 +86,7 @@ class CardsTable extends Table
 
         $validator
             ->dateTime('due_date')
-            ->requirePresence('due_date', 'create')
-            ->notEmptyDateTime('due_date');
+            ->allowEmptyDateTime('due_date');
 
         $validator
             ->boolean('archived')
