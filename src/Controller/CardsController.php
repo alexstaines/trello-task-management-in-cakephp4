@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 namespace App\Controller;
+use Cake\I18n\Time;
+use Cake\I18n\Date;
 
 /**
  * Cards Controller
@@ -47,15 +49,20 @@ class CardsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add($id = null)
     {
         $card = $this->Cards->newEmptyEntity();
         if ($this->request->is('post')) {
             $card = $this->Cards->patchEntity($card, $this->request->getData());
+
+            $card->name = 'New Card';
+            $card->created = Time::now();
+            $card->modified = Time::now();
+            $card->lane_id = $id;
             if ($this->Cards->save($card)) {
                 $this->Flash->success(__('The card has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['controller' => 'Lanes', 'action' => 'index']);
             }
             $this->Flash->error(__('The card could not be saved. Please, try again.'));
         }
