@@ -22,7 +22,7 @@
                             <div class="card-body">
                             </div>
                             <div class="card-footer"></div>
-                            <a class="stretched-link" href="<?= $this->Url->build(['controller' => 'Cards', 'action' => 'view', $card->id]) ?>"></a>
+                            <a class="stretched-link" data-bs-toggle="modal" data-bs-target="#cardClick"></a>
                         </div>
                     <?php endforeach; ?>
                     <?= $this->Form->create(null, ['url' => ['controller' => 'Cards', 'action' => 'add', $lane->id]]); ?>
@@ -35,6 +35,26 @@
         </div>
     <?php endforeach; ?>
 
+</div>
+
+<!-- Modals -->
+
+<!-- Card Click -->
+<div class="modal modal-dialog-scrollable fade" id="cardClick">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cardTitle">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
 </div>
 
 
