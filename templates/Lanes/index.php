@@ -8,7 +8,7 @@
                 
                 <div class="card-body bg-light p-2">
                     <?php foreach ($lane->cards as $card): ?>
-                        <div class="card shadow border-0 m-1 mt-2">
+                        <div class="card-clicked card shadow border-0 m-1 mt-2">
                             <div class="card-header bg-white border-bottom-0">
                                 <div class="row">
                                     <div class="col-sm">
@@ -22,7 +22,7 @@
                             <div class="card-body">
                             </div>
                             <div class="card-footer"></div>
-                            <a class="stretched-link" data-bs-toggle="modal" data-bs-target="#cardClick"></a>
+                            <a class="stretched-link" id="cardOpen" onclick="getCard(null,<?= $card->id ?>,'get')" data-id="<?= $card->id ?>" data-action="get" data-bs-toggle="modal" data-bs-target="#cardClick"></a>
                         </div>
                     <?php endforeach; ?>
                     <?= $this->Form->create(null, ['url' => ['controller' => 'Cards', 'action' => 'add', $lane->id]]); ?>
@@ -56,5 +56,39 @@
         </div>
     </div>
 </div>
+
+
+<script>
+  
+
+    // $('.card-clicked').click(function() {
+    //     id = $(this).data("id");
+    //     alert(id);
+    // })
+    function getCard(url, id, action) {
+        $.ajax({
+            url: "<?= $this->Url->build(['controller' => 'Cards', 'action' => 'index']) ?>",
+            type: "POST", //request type
+            data: {
+                "action" : action,
+                "id": id
+            },
+            headers: {
+                "X-CSRF-Token":$('[name="_csrfToken"]').val()
+            },
+            success: function(result_json) {
+                result = JSON.parse(result_json);
+
+                if (action == 'get') {
+                    //fill fields
+                    document.getElementById('cardTitle').innerHTML = result['name'];
+                
+                }
+            }
+        });
+    }
+    
+
+</script>
 
 
