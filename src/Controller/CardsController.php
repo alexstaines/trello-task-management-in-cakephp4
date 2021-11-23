@@ -20,6 +20,31 @@ class CardsController extends AppController
      */
     public function index()
     {
+
+
+        //ajax for card-onclick
+        if ($this->request->is('ajax')) {
+            
+            $this->autoRender = false;
+
+            if ($this->request->getData()['action'] == 'get') {
+                $id = intval($this->request->getData()['id']);
+
+                $card = $this->Cards->get($id);
+
+                // $task->due_date = $task->due_date->format('d/m/Y');
+                // $task->created_date = $task->created_date->format('d/m/Y h:ia');
+                // $task->modified_date = $task->modified_date->format('d/m/Y h:ia');
+                $card = json_encode($card);
+
+                echo $card;
+
+            }
+            
+        }
+
+
+
         $this->paginate = [
             'contain' => ['Lanes'],
         ];
