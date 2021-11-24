@@ -44,11 +44,15 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="cardTitle">Modal title</h5>
+                <h4 class="modal-title" id="cardTitle"></h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                
+                <h5>Checklists</h5>
+                <h6 id="checklistTitle"></h6>
+                <ul id="checklistItems">
+
+                </ul>
             </div>
             <div class="modal-footer">
 
@@ -66,6 +70,9 @@
     //     alert(id);
     // })
     function getCard(url, id, action) {
+        //clear modal fields for new data
+        clearFields();
+
         $.ajax({
             url: "<?= $this->Url->build(['controller' => 'Cards', 'action' => 'index']) ?>",
             type: "POST", //request type
@@ -80,12 +87,37 @@
                 result = JSON.parse(result_json);
 
                 if (action == 'get') {
+
+                    const checklists = result['checklists'];
                     //fill fields
                     document.getElementById('cardTitle').innerHTML = result['name'];
+                    
+                    //checklists
+                    for (let i = 0; i < checklists.length; i++) {
+                        document.getElementById('checklistTitle').innerHTML = checklists[i]['name'];
+
+                        //checklist items
+                        for (let j = 0; j < checklists[i]['checklist_items'].length; j++) {
+                            let checkItem = document.createElement("LI");
+                            checkItem.innerHTML = checklists[i]['checklist_items'][j]['name'];
+                            document.getElementById('checklistItems').appendChild(checkItem); 
+                        }
+                    }
+                    //document.getElementById('checklistTitle').innerHTML = checklists[0]['name'];
+                    
                 
                 }
             }
         });
+    }
+
+    function clearFields() {
+        document.getElementById('cardTitle').innerHTML = '';
+        document.getElementById('checklistTitle').innerHTML = '';
+
+        while (document.getElementById('checklistItems').firstChild) {
+            document.getElementById('checklistItems').removeChild(document.getElementById('checklistItems').firstChild);
+        }
     }
     
 
