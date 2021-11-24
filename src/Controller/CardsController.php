@@ -30,7 +30,7 @@ class CardsController extends AppController
             if ($this->request->getData()['action'] == 'get') {
                 $id = intval($this->request->getData()['id']);
 
-                $card = $this->Cards->get($id);
+                $card = $this->Cards->get($id, ['contain' => ['Checklists.ChecklistItems']]);
 
                 // $task->due_date = $task->due_date->format('d/m/Y');
                 // $task->created_date = $task->created_date->format('d/m/Y h:ia');
