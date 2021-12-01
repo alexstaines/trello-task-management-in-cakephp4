@@ -109,10 +109,13 @@ class CardsController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $card = $this->Cards->patchEntity($card, $this->request->getData());
+
+            $card->modified = Time::now();
+
             if ($this->Cards->save($card)) {
                 $this->Flash->success(__('The card has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['controller' => 'Lanes', 'action' => 'index']);
             }
             $this->Flash->error(__('The card could not be saved. Please, try again.'));
         }

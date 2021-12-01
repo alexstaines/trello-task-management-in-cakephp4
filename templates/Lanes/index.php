@@ -8,7 +8,7 @@
                 
                 <div class="card-body bg-light p-2">
                     <?php foreach ($lane->cards as $card): ?>
-                        <div class="lane-card card shadow border-0 m-1 mt-2">
+                        <div class="cursor-pointer card shadow border-0 m-1 mt-2">
                             <div class="card-header bg-white border-bottom-0">
                                 <div class="row">
                                     <div class="col-sm">
@@ -47,6 +47,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <h5>Description</h5>
+                <div class="cursor-pointer" id="description"></div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text"></div>
+
+                <form method="post" id="editDescriptionForm" style="display:none;">
+                    <div style="display:none"><input style="display:none" name="_csrfToken" value=<?= $this->request->getAttribute('csrfToken')?>></input></div>
+                    
+                    <textarea name="description" class="form-control" required></textarea>
+                    <button class="btn btn-sm btn-primary" type="submit">Save</button>
+                    <button type="button" class="btn-close" id="descriptionClose"></button>
+                
+                
+                </form>
+
+                <br>
+                
                 <h5>Checklists</h5>
                 <div id="checklistList"></div>
    
@@ -80,6 +97,12 @@
     //     alert(id);
     // })
     function getCard(url, id, action) {
+        //click to show editable text box
+        $("#description, #descriptionClose").click( function(){
+            $("#editDescriptionForm").toggle();
+            $("#description").toggle();
+        });
+
         //clear modal fields for new data
         clearFields();
 
@@ -90,6 +113,7 @@
         const CSRF_TOKEN = "<?= $this->request->getAttribute('csrfToken')?>";
 
         //document.getElementById('newChecklistForm').setAttribute('action', document.getElementById('newChecklistForm').getAttribute('action')+"/"+id);
+        document.getElementById('editDescriptionForm').setAttribute('action', "<?= $this->Url->build(['controller' => 'Cards', 'action' => 'edit']) ?>/"+id);
         document.getElementById('newChecklistForm').setAttribute('action', "<?= $this->Url->build(['controller' => 'Checklists', 'action' => 'add']) ?>/"+id);
 
         $.ajax({
@@ -113,6 +137,8 @@
                     const checklists = result['checklists'];
                     //fill fields
                     document.getElementById('cardTitle').innerHTML = result['name'];
+                    
+                    (result['description'] == null || result['description'] == "") ? document.getElementById('description').innerHTML ="Add a description..." : document.getElementById('description').innerHTML = result['description'];
                     
                     //checklists
                     for (let i = 0; i < checklists.length; i++) {
@@ -173,10 +199,16 @@
 
     function clearFields() {
         document.getElementById('cardTitle').innerHTML = '';
+        document.getElementById('description').innerHTML = '';
         
         while (document.getElementById('checklistList').firstChild) {
             document.getElementById('checklistList').removeChild(document.getElementById('checklistList').firstChild);
         }
+
+        //hide opened input boxes
+        $("#editDescriptionForm").hide();
+        $("#description").show();
+
 
         //checklist add form
         // newChecklistForm = document.getElementById('newChecklistForm').getAttribute('action');
