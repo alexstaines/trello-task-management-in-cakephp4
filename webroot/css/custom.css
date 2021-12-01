@@ -28,3 +28,25 @@
     border-radius: 10px;
     border: 3px solid #ffffff;
   }
+
+  /* Skeleton Loading */
+  .skeleton {
+    opacity: .7;
+    animation: skeleton-loading 1s linear infinite alternate;
+  }
+
+  .skeleton-text {
+    width: 80%;
+    height: 1.25rem;
+    margin-bottom: .5rem;
+    border-radius: .25rem;
+  }
+
+  @keyframes skeleton-loading {
+    0% {
+      background-color: hsl(200, 20%, 70%);
+    }
+    100% {
+      background-color: hsl(200, 20%, 95%);
+    }
+  }

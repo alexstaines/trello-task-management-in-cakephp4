@@ -43,14 +43,16 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="cardTitle"></h4>
+                <div id="skeletonTitle" class="skeleton skeleton-text"></div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <h5>Checklists</h5>
                 <div id="checklistList"></div>
+   
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text"></div>
                 
-
-
                 
                 <form method="post" id="newChecklistForm">
                     <div style="display:none"><input style="display:none" name="_csrfToken" value=<?= $this->request->getAttribute('csrfToken')?>></input></div>
@@ -81,6 +83,10 @@
         //clear modal fields for new data
         clearFields();
 
+        //skeleton loading
+        $('.skeleton').addClass('skeleton-text');
+
+
         const CSRF_TOKEN = "<?= $this->request->getAttribute('csrfToken')?>";
 
         //document.getElementById('newChecklistForm').setAttribute('action', document.getElementById('newChecklistForm').getAttribute('action')+"/"+id);
@@ -101,6 +107,9 @@
 
                 if (action == 'get') {
 
+                    //remove skeleton loading
+                    $('.skeleton-text').removeClass('skeleton-text');
+                    
                     const checklists = result['checklists'];
                     //fill fields
                     document.getElementById('cardTitle').innerHTML = result['name'];
