@@ -1,3 +1,7 @@
+body {
+  background-color: #B15D5D;
+}
+
 .lane {
     width: 300px !important;
 }
@@ -19,22 +23,21 @@
   /* Firefox */
   * {
     scrollbar-width: auto;
-    scrollbar-color: #98ace6 #ffffff;
+    scrollbar-color: #e69898 #ffffff00;
   }
 
   /* Chrome, Edge, and Safari */
   *::-webkit-scrollbar {
-    width: 16px;
+    width: 10px;
   }
 
   *::-webkit-scrollbar-track {
-    background: #ffffff;
+    background: #ffffff00;
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: #98ace6;
+    background-color: #e69898;
     border-radius: 10px;
-    border: 3px solid #ffffff;
   }
 
 
@@ -49,6 +52,12 @@
     width: 80%;
     height: 1.25rem;
     margin-bottom: .5rem;
+    border-radius: .25rem;
+  }
+  .skeleton-title {
+    width: 80%;
+    height: 1.75rem;
+    margin-bottom: 1rem;
     border-radius: .25rem;
   }
 
