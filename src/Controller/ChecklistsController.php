@@ -47,20 +47,22 @@ class ChecklistsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add($id = null)
     {
         $checklist = $this->Checklists->newEmptyEntity();
         if ($this->request->is('post')) {
             $checklist = $this->Checklists->patchEntity($checklist, $this->request->getData());
+
+            $checklist->card_id = $id;
             if ($this->Checklists->save($checklist)) {
                 $this->Flash->success(__('The checklist has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['controller' => 'Lanes', 'action' => 'index']);
             }
             $this->Flash->error(__('The checklist could not be saved. Please, try again.'));
         }
-        $cards = $this->Checklists->Cards->find('list', ['limit' => 200])->all();
-        $this->set(compact('checklist', 'cards'));
+        // $cards = $this->Checklists->Cards->find('list', ['limit' => 200])->all();
+        // $this->set(compact('checklist', 'cards'));
     }
 
     /**
