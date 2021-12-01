@@ -14,9 +14,7 @@
                                     <div class="col-sm">
                                         <?= $card->name ?>
                                     </div>
-                                    <div class="col-sm">
-                                        <a href="" class="float-end"><i class="fas fa-edit text-secondary"></i></a>
-                                    </div>
+                                    
                                 </div>
                             </div>
                             <div class="card-body">
@@ -27,7 +25,7 @@
                     <?php endforeach; ?>
                     <?= $this->Form->create(null, ['url' => ['controller' => 'Cards', 'action' => 'add', $lane->id]]); ?>
                     <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-outline-dark">+ Add card</button>
+                        <button type="submit" class="btn btn-outline-dark border-0">+ Add card</button>
                     </div>
                     <?= $this->Form->end() ?>
                 </div>
@@ -49,10 +47,20 @@
             </div>
             <div class="modal-body">
                 <h5>Checklists</h5>
-                <h6 id="checklistTitle"></h6>
-                <ul id="checklistItems">
+                <div id="checklistList"></div>
+                
 
-                </ul>
+
+                
+                <form method="post" id="newChecklistForm">
+                    <div style="display:none"><input style="display:none" name="_csrfToken" value=<?= $this->request->getAttribute('csrfToken')?>></input></div>
+                    
+                    <label>New Checklist</label>
+                    <input name="name" class="form-control" required></input>
+                    <button class="btn btn-sm btn-primary" type="submit">Add</button>
+                
+                
+                </form>
             </div>
             <div class="modal-footer">
 
@@ -72,6 +80,11 @@
     function getCard(url, id, action) {
         //clear modal fields for new data
         clearFields();
+
+        const CSRF_TOKEN = "<?= $this->request->getAttribute('csrfToken')?>";
+
+        //document.getElementById('newChecklistForm').setAttribute('action', document.getElementById('newChecklistForm').getAttribute('action')+"/"+id);
+        document.getElementById('newChecklistForm').setAttribute('action', "<?= $this->Url->build(['controller' => 'Checklists', 'action' => 'add']) ?>/"+id);
 
         $.ajax({
             url: "<?= $this->Url->build(['controller' => 'Cards', 'action' => 'index']) ?>",
@@ -94,13 +107,51 @@
                     
                     //checklists
                     for (let i = 0; i < checklists.length; i++) {
-                        document.getElementById('checklistTitle').innerHTML = checklists[i]['name'];
+                        
+                        let checklist = document.createElement("UL");
+                        checklist.setAttribute('id','checklist-'+i);
+                        checklist.innerHTML = checklists[i]['name'];
+                        let checklist_id = checklists[i]['id'];
+                        document.getElementById('checklistList').appendChild(checklist);
+
+                        //form element, append to checklist UL
+                        //form will create new checklist items
+                        let checklistItemForm = document.createElement("form");
+                        checklistItemForm.setAttribute('id', 'form-'+i);
+                        checklistItemForm.setAttribute('method', 'post');
+                        checklistItemForm.setAttribute('action', '<?= $this->Url->build(['controller' => 'ChecklistItems', 'action' => 'add']) ?>/'+checklist_id);
+                        document.getElementById('checklist-'+i).appendChild(checklistItemForm);
+
+                        //csrf
+                        let csrf_input = document.createElement("input");
+                        csrf_input.setAttribute('style','display:none');
+                        csrf_input.setAttribute('name','_csrfToken');
+                        csrf_input.setAttribute('value', CSRF_TOKEN);
+                        checklistItemForm.appendChild(csrf_input);
+
+                        let input = document.createElement("INPUT");
+                        let submit = document.createElement("BUTTON");
+                        input.setAttribute('name', 'name');
+                        input.setAttribute('placeholder', 'Add an item');
+                        submit.setAttribute('type','submit');
+                        submit.setAttribute('class','btn btn-sm btn-primary');
+                        submit.innerHTML = 'Add';
+                        document.getElementById('form-'+i).appendChild(input);
+                        document.getElementById('form-'+i).appendChild(submit);
+
+
+                        //document.getElementById('checklist-'+i).appendChild(submit);
+
+                        
+                        
 
                         //checklist items
                         for (let j = 0; j < checklists[i]['checklist_items'].length; j++) {
                             let checkItem = document.createElement("LI");
                             checkItem.innerHTML = checklists[i]['checklist_items'][j]['name'];
-                            document.getElementById('checklistItems').appendChild(checkItem); 
+                            document.getElementById('checklist-'+i).appendChild(checkItem); 
+
+                            
                         }
                     }
                     //document.getElementById('checklistTitle').innerHTML = checklists[0]['name'];
@@ -113,11 +164,18 @@
 
     function clearFields() {
         document.getElementById('cardTitle').innerHTML = '';
-        document.getElementById('checklistTitle').innerHTML = '';
-
-        while (document.getElementById('checklistItems').firstChild) {
-            document.getElementById('checklistItems').removeChild(document.getElementById('checklistItems').firstChild);
+        
+        while (document.getElementById('checklistList').firstChild) {
+            document.getElementById('checklistList').removeChild(document.getElementById('checklistList').firstChild);
         }
+
+        //checklist add form
+        // newChecklistForm = document.getElementById('newChecklistForm').getAttribute('action');
+        // document.getElementById('newChecklistForm').setAttribute('action', newChecklistForm.slice(0, -1))
+
+        // while (document.getElementById('checklistItems').firstChild) {
+        //     document.getElementById('checklistItems').removeChild(document.getElementById('checklistItems').firstChild);
+        // }
     }
     
 
