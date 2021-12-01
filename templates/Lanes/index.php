@@ -25,7 +25,7 @@
                     <?php endforeach; ?>
                     <?= $this->Form->create(null, ['url' => ['controller' => 'Cards', 'action' => 'add', $lane->id]]); ?>
                     <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-outline-dark border-0">+ Add card</button>
+                        <button type="submit" class="btn btn-outline-secondary border-0">+ Add card</button>
                     </div>
                     <?= $this->Form->end() ?>
                 </div>
@@ -39,11 +39,11 @@
 
 <!-- Card Click -->
 <div class="modal modal-dialog-scrollable fade" id="cardClick">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="cardTitle"></h4>
-                <div id="skeletonTitle" class="skeleton skeleton-text"></div>
+                <div id="skeletonTitle" class="skeleton skeleton-header skeleton-title"></div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -55,7 +55,7 @@
                 <form method="post" id="editDescriptionForm" style="display:none;">
                     <div style="display:none"><input style="display:none" name="_csrfToken" value=<?= $this->request->getAttribute('csrfToken')?>></input></div>
                     
-                    <textarea name="description" class="form-control" required></textarea>
+                    <textarea name="description" class="form-control" id="descriptionInput" required></textarea>
                     <button class="btn btn-sm btn-primary" type="submit">Save</button>
                     <button type="button" class="btn-close" id="descriptionClose"></button>
                 
@@ -70,14 +70,13 @@
                 <div class="skeleton skeleton-text"></div>
                 <div class="skeleton skeleton-text"></div>
                 
-                
-                <form method="post" id="newChecklistForm">
+                <div id="newChecklist" class="cursor-pointer">+ New Checklist</div>
+                <form method="post" id="newChecklistForm" style="display:none;">
                     <div style="display:none"><input style="display:none" name="_csrfToken" value=<?= $this->request->getAttribute('csrfToken')?>></input></div>
                     
-                    <label>New Checklist</label>
-                    <input name="name" class="form-control" required></input>
+                    <input name="name" class="form-control" required placeholder="New Checklist"></input>
                     <button class="btn btn-sm btn-primary" type="submit">Add</button>
-                
+                    <button type="button" class="btn-close" id="newChecklistInputClose"></button>
                 
                 </form>
             </div>
@@ -102,12 +101,17 @@
             $("#editDescriptionForm").toggle();
             $("#description").toggle();
         });
+        $("#newChecklist, #newChecklistInputClose").click( function(){
+            $("#newChecklistForm").toggle();
+            $("#newChecklist").toggle();
+        });
 
         //clear modal fields for new data
         clearFields();
 
         //skeleton loading
         $('.skeleton').addClass('skeleton-text');
+        $('.skeleton-header').addClass('skeleton-title');
 
 
         const CSRF_TOKEN = "<?= $this->request->getAttribute('csrfToken')?>";
@@ -133,17 +137,26 @@
 
                     //remove skeleton loading
                     $('.skeleton-text').removeClass('skeleton-text');
+                    $('.skeleton-title').removeClass('skeleton-title');
                     
                     const checklists = result['checklists'];
                     //fill fields
                     document.getElementById('cardTitle').innerHTML = result['name'];
                     
-                    (result['description'] == null || result['description'] == "") ? document.getElementById('description').innerHTML ="Add a description..." : document.getElementById('description').innerHTML = result['description'];
+                    
+                    if (result['description'] == null || result['description'] == "") {
+                        document.getElementById('description').innerHTML = "Add a description...";
+                    } else {
+                        document.getElementById('description').innerHTML = result['description'];
+                        document.getElementById('descriptionInput').innerHTML = result['description'];
+                    }
+                    
+                    
                     
                     //checklists
                     for (let i = 0; i < checklists.length; i++) {
                         
-                        let checklist = document.createElement("UL");
+                        let checklist = document.createElement("div");
                         checklist.setAttribute('id','checklist-'+i);
                         checklist.innerHTML = checklists[i]['name'];
                         let checklist_id = checklists[i]['id'];
@@ -182,9 +195,13 @@
 
                         //checklist items
                         for (let j = 0; j < checklists[i]['checklist_items'].length; j++) {
-                            let checkItem = document.createElement("LI");
-                            checkItem.innerHTML = checklists[i]['checklist_items'][j]['name'];
+                            let checkItem = document.createElement("input");
+                            let checkItemLabel = document.createElement("label");
+                            checkItem.setAttribute('type','checkbox');
+                            checkItem.setAttribute('class','form-check-input');
+                            checkItemLabel.innerHTML = checklists[i]['checklist_items'][j]['name'];
                             document.getElementById('checklist-'+i).appendChild(checkItem); 
+                            document.getElementById('checklist-'+i).appendChild(checkItemLabel); 
 
                             
                         }
@@ -208,6 +225,8 @@
         //hide opened input boxes
         $("#editDescriptionForm").hide();
         $("#description").show();
+        $("#newChecklistForm").hide();
+        $("#newChecklist").show();
 
 
         //checklist add form
