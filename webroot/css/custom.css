@@ -7,6 +7,14 @@
     flex-wrap: nowrap !important;
 
   }
+.lane-card {
+  cursor: pointer;
+}
+
+
+
+
+
 /* ===== Scrollbar CSS ===== */
   /* Firefox */
   * {
@@ -29,7 +37,9 @@
     border: 3px solid #ffffff;
   }
 
-  /* Skeleton Loading */
+
+
+  /* ==== Skeleton Loading ==== */
   .skeleton {
     opacity: .7;
     animation: skeleton-loading 1s linear infinite alternate;

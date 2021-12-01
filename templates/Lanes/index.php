@@ -8,7 +8,7 @@
                 
                 <div class="card-body bg-light p-2">
                     <?php foreach ($lane->cards as $card): ?>
-                        <div class="card-clicked card shadow border-0 m-1 mt-2">
+                        <div class="lane-card card shadow border-0 m-1 mt-2">
                             <div class="card-header bg-white border-bottom-0">
                                 <div class="row">
                                     <div class="col-sm">
