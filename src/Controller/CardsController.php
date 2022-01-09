@@ -76,6 +76,16 @@ class CardsController extends AppController
      */
     public function add($id = null)
     {
+        $last_pos = $this->Cards->find('all', ['conditions' => ['lane_id' => $id], 'order' => ['position' => 'DESC'], 'limit'=>1])->first();
+
+        //check if no cards, or existing cards have no position assigned.
+        if (is_null($last_pos) || is_null($last_pos->position)) {
+            $last_pos = -1;
+        } else {
+            $last_pos = $last_pos->position;
+        }
+
+
         $card = $this->Cards->newEmptyEntity();
         if ($this->request->is('post')) {
             $card = $this->Cards->patchEntity($card, $this->request->getData());
@@ -83,6 +93,8 @@ class CardsController extends AppController
             $card->name = 'New Card';
             $card->created = Time::now();
             $card->modified = Time::now();
+
+            $card->position = $last_pos + 1;
             $card->lane_id = $id;
             if ($this->Cards->save($card)) {
                 $this->Flash->success(__('The card has been saved.'));
