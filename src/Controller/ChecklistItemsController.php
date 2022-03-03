@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\ChecklistItem;
+
 /**
  * ChecklistItems Controller
  *
@@ -49,11 +51,23 @@ class ChecklistItemsController extends AppController
      */
     public function add($id = null)
     {
+        $last_pos = $this->ChecklistItems->find('all', ['conditions' => ['checklist_id' => $id], 'order' => ['position' => 'DESC'], 'limit'=>1])->first();
+
+        //check if no cards, or existing cards have no position assigned.
+        if (is_null($last_pos) || is_null($last_pos->position)) {
+            $last_pos = -1;
+        } else {
+            $last_pos = $last_pos->position;
+        }
+
         $checklistItem = $this->ChecklistItems->newEmptyEntity();
         if ($this->request->is('post')) {
             $checklistItem = $this->ChecklistItems->patchEntity($checklistItem, $this->request->getData());
 
             $checklistItem->checklist_id = $id;
+
+            $checklistItem->position = $last_pos + 1;
+            
             if ($this->ChecklistItems->save($checklistItem)) {
                 $this->Flash->success(__('The checklist item has been saved.'));
 
