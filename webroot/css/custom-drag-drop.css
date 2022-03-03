@@ -1,0 +1,9 @@
+
+.draggable {
+    cursor: grab;
+    
+}
+
+.draggable.dragging {
+    opacity: .5;
+}
