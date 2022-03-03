@@ -1,3 +1,6 @@
+<?=$this->Html->css('custom-drag-drop.css', ['block'=> true])?>
+<?=$this->Html->script('custom-drag-drop.js', ['block'=>'scriptBottom'])?>
+
 
 
 <div class="row-lane row">
@@ -8,11 +11,12 @@
                 
                 <div class="card-body bg-light p-2">
                     <?php foreach ($lane->cards as $card): ?>
-                        <div class="cursor-pointer card shadow border-0 m-1 mt-2">
+                        <div class="cursor-pointer card shadow border-0 m-1 mt-2 draggable" draggable="true">
                             <div class="card-header bg-white border-bottom-0">
                                 <div class="row">
                                     <div class="col-sm">
                                         <?= $card->name ?>
+                                        <?= $card->position ?>
                                     </div>
                                     
                                 </div>
@@ -42,7 +46,17 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="cardTitle"></h4>
+                <h4 class="modal-title cursor-pointer" id="cardTitle"></h4>
+                <form method="post" id="editCardTitleForm" style="display:none;">
+                    <div style="display:none"><input style="display:none" name="_csrfToken" value=<?= $this->request->getAttribute('csrfToken')?>></input></div>
+                    
+                    <input name="name" class="form-control" id="cardTitleInput" required></input>
+                    <button class="btn btn-sm btn-primary" type="submit">Save</button>
+                    <button type="button" class="btn-close" id="cardTitleClose"></button>
+                
+                
+                </form>
+
                 <div id="skeletonTitle" class="skeleton skeleton-header skeleton-title"></div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -97,13 +111,23 @@
     // })
     function getCard(url, id, action) {
         //click to show editable text box
-        $("#description, #descriptionClose").click( function(){
+        $("#cardTitle, #cardTitleClose").click( function(e){
+            $("#editCardTitleForm").toggle();
+            $("#cardTitle").toggle();
+            //fixes issue with click event being called twice every 2nd time modal is opened, and event is clicked
+            e.stopImmediatePropagation()
+        });
+        $("#description, #descriptionClose").click( function(e){
             $("#editDescriptionForm").toggle();
             $("#description").toggle();
+            //fixes issue with click event being called twice every 2nd time modal is opened, and event is clicked
+            e.stopImmediatePropagation()
         });
-        $("#newChecklist, #newChecklistInputClose").click( function(){
+        $("#newChecklist, #newChecklistInputClose").click( function(e){
             $("#newChecklistForm").toggle();
             $("#newChecklist").toggle();
+            //fixes issue with click event being called twice every 2nd time modal is opened, and event is clicked
+            e.stopImmediatePropagation()
         });
 
         //clear modal fields for new data
@@ -117,6 +141,7 @@
         const CSRF_TOKEN = "<?= $this->request->getAttribute('csrfToken')?>";
 
         //document.getElementById('newChecklistForm').setAttribute('action', document.getElementById('newChecklistForm').getAttribute('action')+"/"+id);
+        document.getElementById('editCardTitleForm').setAttribute('action', "<?= $this->Url->build(['controller' => 'Cards', 'action' => 'edit']) ?>/"+id);
         document.getElementById('editDescriptionForm').setAttribute('action', "<?= $this->Url->build(['controller' => 'Cards', 'action' => 'edit']) ?>/"+id);
         document.getElementById('newChecklistForm').setAttribute('action', "<?= $this->Url->build(['controller' => 'Checklists', 'action' => 'add']) ?>/"+id);
 
@@ -142,6 +167,7 @@
                     const checklists = result['checklists'];
                     //fill fields
                     document.getElementById('cardTitle').innerHTML = result['name'];
+                    document.getElementById('cardTitleInput').value = result['name'];
                     
                     
                     if (result['description'] == null || result['description'] == "") {
@@ -216,7 +242,9 @@
 
     function clearFields() {
         document.getElementById('cardTitle').innerHTML = '';
+        document.getElementById('cardTitleInput').innerHTML = '';
         document.getElementById('description').innerHTML = '';
+        document.getElementById('descriptionInput').innerHTML = '';
         
         while (document.getElementById('checklistList').firstChild) {
             document.getElementById('checklistList').removeChild(document.getElementById('checklistList').firstChild);
@@ -227,6 +255,8 @@
         $("#description").show();
         $("#newChecklistForm").hide();
         $("#newChecklist").show();
+        $("#editCardTitleForm").hide();
+        $("#cardTitle").show();
 
 
         //checklist add form
