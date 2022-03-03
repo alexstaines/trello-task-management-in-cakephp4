@@ -18,7 +18,9 @@ class LanesController extends AppController
      */
     public function index()
     {
-        $lanes = $this->Lanes->find('all')->contain(['Cards']);
+        $lanes = $this->Lanes->find('all')->contain([
+            'Cards' => ['sort' => ['Cards.position' => 'ASC']]
+        ]);
 
 
 
