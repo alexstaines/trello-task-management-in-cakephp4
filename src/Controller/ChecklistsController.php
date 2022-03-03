@@ -49,11 +49,23 @@ class ChecklistsController extends AppController
      */
     public function add($id = null)
     {
+        $last_pos = $this->Checklists->find('all', ['conditions' => ['card_id' => $id], 'order' => ['position' => 'DESC'], 'limit'=>1])->first();
+
+        //check if no cards, or existing cards have no position assigned.
+        if (is_null($last_pos) || is_null($last_pos->position)) {
+            $last_pos = -1;
+        } else {
+            $last_pos = $last_pos->position;
+        }
+
         $checklist = $this->Checklists->newEmptyEntity();
         if ($this->request->is('post')) {
             $checklist = $this->Checklists->patchEntity($checklist, $this->request->getData());
 
             $checklist->card_id = $id;
+
+            $checklist->position = $last_pos + 1;
+
             if ($this->Checklists->save($checklist)) {
                 $this->Flash->success(__('The checklist has been saved.'));
 
